@@ -5,6 +5,8 @@ import { Player } from './entities/Player.js';
 import { Level } from './world/Level.js';
 import { getLevelsData, THEMES } from './world/LevelsData.js';
 import { HUD } from './ui/HUD.js';
+import { PuzzleManager } from './puzzle/PuzzleManager.js';
+import { PuzzlePiece } from './entities/PuzzlePiece.js';
 
 class Game {
     constructor() {
@@ -16,10 +18,13 @@ class Game {
         this.input = new Input();
         this.renderer = new Renderer(this.ctx, this.width, this.height);
         this.hud = new HUD();
+        this.puzzleManager = new PuzzleManager(this);
         this.levelsData = getLevelsData();
         
         this.currentLevelIdx = 0;
         this.level = null;
+        this.artInfo = null;
+        
         this.player = null;
         this.physics = null;
         this.camera = { x: 0, y: 0 };
@@ -35,7 +40,14 @@ class Game {
         this._bindEvents();
         this.hud.updateLevelSelector(this.levelsData);
         
+        this._loadArtInfo();
+        
         requestAnimationFrame((ts) => this.loop(ts));
+    }
+
+    async _loadArtInfo() {
+        const resp = await fetch('js/data/info-obras.json');
+        this.artInfo = await resp.json();
     }
 
     _initResize() {
@@ -48,14 +60,28 @@ class Game {
     }
 
     _bindEvents() {
+        // Level Selector
         const levelBtns = document.querySelectorAll('.level-btn');
         levelBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const lvl = parseInt(e.target.dataset.level);
+                const lvl = parseInt(e.currentTarget.dataset.level);
                 document.getElementById('startScreen').style.display = 'none';
                 this.start(lvl);
             });
         });
+
+        // HUD Buttons
+        document.getElementById('menuBtn').onclick = () => {
+            if (confirm("¿Volver al menú principal? Perderás el progreso del nivel.")) {
+                location.reload();
+            }
+        };
+
+        document.getElementById('retryBtn').onclick = () => {
+            if (confirm("¿Reiniciar este nivel?")) {
+                this.start(this.currentLevelIdx);
+            }
+        };
     }
 
     start(levelIdx = 0) {
@@ -68,7 +94,7 @@ class Game {
         const data = this.levelsData[idx];
         const theme = THEMES[idx] || THEMES[0];
         
-        this.level = new Level(data, theme);
+        this.level = new Level(data, theme, 12);
         this.physics = new Physics(this.level);
         
         // Reset level-specific stats
@@ -80,7 +106,7 @@ class Game {
         this.player = new Player(TILE_SIZE, 10 * TILE_SIZE);
         this.camera = { x: 0, y: 0 };
         this._startTimer();
-        this.hud.update(this.lives, this.coins, this.currentLevelIdx, this.timer);
+        this.hud.update(this.lives, this.coins, this.currentLevelIdx, this.timer, this.level);
     }
 
     _startTimer() {
@@ -128,24 +154,40 @@ class Game {
 
         this.level.enemies.forEach(enemy => enemy.update(this.physics, this.level));
         this.level.coins.forEach(coin => coin.update());
+        this.level.puzzlePieces.forEach(p => p.update());
 
         this.level.coins.forEach(coin => {
             if (!coin.collected && this.physics.checkOverlap(this.player, coin)) {
                 coin.collected = true;
                 this.coins++;
-                this.hud.update(this.lives, this.coins, this.currentLevelIdx, this.timer);
+                this.hud.update(this.lives, this.coins, this.currentLevelIdx, this.timer, this.level);
+            }
+        });
+
+        this.level.puzzlePieces.forEach(p => {
+            if (!p.collected && this.physics.checkOverlap(this.player, p)) {
+                p.collected = true;
+                this.level.collectedPieceIndices.push(p.pieceIdx);
+                this.hud.update(this.lives, this.coins, this.currentLevelIdx, this.timer, this.level);
             }
         });
 
         if (this.player.invincible <= 0) {
             this.level.enemies.forEach(enemy => {
                 if (enemy.alive && this.physics.checkOverlap(this.player, enemy)) {
-                    const isStomping = this.player.vy > 0 && this.player.y + this.player.height < enemy.y + enemy.height * 0.5;
+                    // Si el jugador cae y su centro está más alto que el centro del enemigo, cuenta como pisotón
+                    const isStomping = this.player.vy > 0 && (this.player.y + this.player.height * 0.5 < enemy.y + enemy.height * 0.5);
                     if (isStomping) {
                         enemy.alive = false;
                         this.player.vy = -7;
                         this.coins += 2;
-                        this.hud.update(this.lives, this.coins, this.currentLevelIdx, this.timer);
+                        
+                        // Drop piece if it holds one
+                        if (enemy.holdsPiece !== null) {
+                            this.level.puzzlePieces.push(new PuzzlePiece(enemy.x, enemy.y, enemy.holdsPiece));
+                        }
+
+                        this.hud.update(this.lives, this.coins, this.currentLevelIdx, this.timer, this.level);
                     } else {
                         this.player.kill();
                     }
@@ -157,7 +199,16 @@ class Game {
             if (this.physics.checkOverlap(this.player, this.level.flag)) {
                 this.level.flag.reached = true;
                 this._saveHighscore();
-                this.completeLevel();
+                // We'll call completeLevel after some delay or when flag reaches bottom
+            }
+        }
+
+        if (this.level.flag && this.level.flag.reached) {
+            // Flag lowering animation check
+            if (this.level.flag.bannerY >= (this.height - TILE_SIZE)) {
+                if (this.gameState === 'playing') {
+                    this.completeLevel();
+                }
             }
         }
 
@@ -168,13 +219,12 @@ class Game {
 
     respawn() {
         this.lives--;
-        this.hud.update(this.lives, this.coins, this.currentLevelIdx, this.timer);
+        this.hud.update(this.lives, this.coins, this.currentLevelIdx, this.timer, this.level);
 
         if (this.lives <= 0) {
             this.gameState = 'gameover';
             this.hud.showMessage('GAME OVER', 'Te has quedado sin vidas.', 'MENU', () => {
-                document.getElementById('startScreen').style.display = 'flex';
-                this.gameState = 'start';
+                location.reload();
             }, "Suerte para la próxima", () => this.start(this.currentLevelIdx));
         } else {
             // Return to start of level
@@ -189,6 +239,15 @@ class Game {
     }
 
     completeLevel() {
+        this.gameState = 'puzzle';
+        
+        const artwork = this.artInfo[this.currentLevelIdx] || this.artInfo[0];
+        const allIndices = [...this.level.defaultPieceIndices, ...this.level.collectedPieceIndices];
+        
+        this.puzzleManager.setup(artwork, allIndices);
+    }
+
+    nextLevel() {
         const isLast = this.currentLevelIdx === this.levelsData.length - 1;
         this.gameState = 'transition';
         
@@ -198,8 +257,7 @@ class Game {
 
         this.hud.showMessage(title, isLast ? "Has conquistado todos los mundos." : `Has superado el mundo ${this.currentLevelIdx + 1}`, btnLabel, () => {
             if (isLast) {
-                document.getElementById('startScreen').style.display = 'flex';
-                this.gameState = 'start';
+                location.reload();
             } else {
                 this.currentLevelIdx++;
                 this.loadLevel(this.currentLevelIdx);
@@ -215,6 +273,7 @@ class Game {
         this.renderer.drawLevel(this.level, this.camera);
         
         this.level.coins.forEach(coin => coin.draw(this.ctx, this.camera, this.level.theme));
+        this.level.puzzlePieces.forEach(p => p.draw(this.ctx, this.camera));
         this.renderer.drawFlag(this.level.flag, this.camera, this.player.bobT);
         this.level.enemies.forEach(enemy => enemy.draw(this.ctx, this.camera));
         

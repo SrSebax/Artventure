@@ -8,6 +8,7 @@ export class Enemy extends Entity {
         this.vx = -0.8;
         this.frame = 0;
         this.frameTimer = 0;
+        this.holdsPiece = null; // pieceIdx if it drops one
     }
 
     update(physics, level) {

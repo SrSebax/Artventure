@@ -81,13 +81,18 @@ export class Renderer {
         const fy = flag.y - camera.y;
         const ctx = this.ctx;
 
+        // Animate flag banner lowering if reached
+        if (flag.reached && flag.bannerY < (this.height - TILE_SIZE)) {
+            flag.bannerY += 2;
+        }
+
         // Banner
-        const wave = Math.sin(bobT * 5) * 4;
+        const wave = flag.reached ? 0 : Math.sin(bobT * 5) * 4;
         ctx.fillStyle = '#f1c40f';
         ctx.beginPath();
-        ctx.moveTo(fx + 6, fy + 5);
-        ctx.lineTo(fx + 30, fy + 12 + wave);
-        ctx.lineTo(fx + 6, fy + 22);
+        ctx.moveTo(fx + 6, fy + flag.bannerY);
+        ctx.lineTo(fx + 34, fy + flag.bannerY + 7 + wave);
+        ctx.lineTo(fx + 6, fy + flag.bannerY + 17);
         ctx.fill();
     }
 }

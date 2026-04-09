@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "nombre": "The wounded deer",
+        "autor": "Frida Kahlo",
+        "año": "1946",
+        "link": "https://www.fridakahlo.org/the-wounded-deer.jsp",
+        "folder": "obra-1"
+    },
+    {
+        "id": 2,
+        "nombre": "Lección de anatomía del Dr. Nicolaes Tulp",
+        "autor": "Rembrandt van Rijn",
+        "año": "1632",
+        "link": "https://historia-arte.com/obras/leccion-de-anatomia-del-dr-nicolaes-tulp",
+        "folder": "obra-2"
+    },
+    {
+        "id": 3,
+        "nombre": "Guernica",
+        "autor": "Pablo Picasso",
+        "año": "1937",
+        "link": "https://www.museoreinasofia.es/colecciones/obra/guernica",
+        "folder": "obra-3"
+    },
+    {
+        "id": 4,
+        "nombre": "Disasters of war 60",
+        "autor": "Gottfried Helnweinr",
+        "año": "2017",
+        "link": "https://hispano.helnwein.com/works/mixed_media_on_canvas/image_4997-Disasters-of-War-60-oil-and-acrylic-on-canvas",
+        "folder": "obra-4"
+    },
+    {
+        "id": 5,
+        "nombre": "La tentación de San Antonio",
+        "autor": "Salvador Dalí",
+        "año": "1946",
+        "link": "https://historia-arte.com/obras/la-tentacion-de-san-antonio-dali",
+        "folder": "obra-5"
+    }
+]

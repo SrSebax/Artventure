@@ -12,11 +12,16 @@ export class HUD {
         this.msgRetryBtn = document.getElementById('msgRetryBtn');
     }
 
-    update(lives, coins, levelIdx, timer) {
+    update(lives, coins, levelIdx, timer, level = null) {
         this.livesEl.textContent = `❤️ x${lives}`;
         this.coinsEl.textContent = `🪙 ${coins}`;
-        this.levelEl.textContent = `Mundo ${levelIdx + 1}`;
+        this.levelEl.textContent = `Obra ${levelIdx + 1}`;
         this.timerEl.textContent = `⏱ ${timer}`;
+
+        if (level) {
+            const count = level.collectedPieceIndices.length + level.defaultPieceIndices.length;
+            document.getElementById('piecesCollected').textContent = `${count} / 12`;
+        }
     }
 
     showMessage(title, text, btnLabel, callback, stats = "", onRetry = null) {

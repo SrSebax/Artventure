@@ -1,7 +1,9 @@
 export const THEMES = [
     { sky: '#87CEEB', ground: '#4CAF50', groundDark: '#2E7D32', brick: '#D2691E', brickDark: '#8B4513', coin: '#FFD700', bg1: '#98FB98', bg2: '#228B22' },
     { sky: '#FF6B35', ground: '#FF8C00', groundDark: '#CC6600', brick: '#8B1A1A', brickDark: '#5C1010', coin: '#FFD700', bg1: '#FF4500', bg2: '#8B0000' },
-    { sky: '#1a1a4e', ground: '#4040CC', groundDark: '#2020AA', brick: '#8800CC', brickDark: '#550088', coin: '#00FFFF', bg1: '#2200AA', bg2: '#000055' }
+    { sky: '#1a1a4e', ground: '#4040CC', groundDark: '#2020AA', brick: '#8800CC', brickDark: '#550088', coin: '#00FFFF', bg1: '#2200AA', bg2: '#000055' },
+    { sky: '#2F4F4F', ground: '#556B2F', groundDark: '#21330F', brick: '#8B4513', brickDark: '#2F1E0E', coin: '#FFD700', bg1: '#6B8E23', bg2: '#556B2F' },
+    { sky: '#2C001E', ground: '#6A0C22', groundDark: '#3A0410', brick: '#541212', brickDark: '#320606', coin: '#FFD700', bg1: '#900C3F', bg2: '#581845' }
 ];
 
 function createBlankMap(cols, rows) {
@@ -59,6 +61,37 @@ export function getLevelsData() {
     [[5, 10], [14, 10], [23, 10], [36, 10], [46, 10], [62, 10]].forEach(([c, r]) => map3[r][c] = 4);
     for (let r = 2; r <= 11; r++) map3[r][67] = 5;
     levels.push({ map: map3, cols: cols3, rows: rows3, timeLimit: 120 });
+
+    // LEVEL 4 - Ruins
+    const cols4 = 75, rows4 = 13;
+    const map4 = createBlankMap(cols4, rows4);
+    for (let c = 0; c < cols4; c++) { map4[12][c] = 1; map4[11][c] = 1; }
+    for (let c = 5; c <= 9; c++) { map4[12][c] = 0; map4[11][c] = 0; }
+    for (let c = 20; c <= 25; c++) { map4[12][c] = 0; map4[11][c] = 0; }
+    for (let c = 40; c <= 45; c++) { map4[12][c] = 0; map4[11][c] = 0; }
+    [[5, 8, 2], [14, 6, 3], [22, 5, 2], [32, 8, 3], [42, 6, 2], [52, 9, 3], [64, 7, 3]].forEach(([c, r, w]) => {
+        for (let i = 0; i < w; i++) map4[r][c + i] = 2;
+    });
+    [[6, 7], [15, 5], [23, 4], [33, 7], [43, 5], [53, 8], [65, 6]].forEach(([c, r]) => map4[r][c] = 3);
+    [[11, 10], [28, 10], [38, 10], [48, 10], [60, 10], [68, 10]].forEach(([c, r]) => map4[r][c] = 4);
+    for (let r = 2; r <= 11; r++) map4[r][72] = 5;
+    levels.push({ map: map4, cols: cols4, rows: rows4, timeLimit: 140 });
+
+    // LEVEL 5 - Inferno
+    const cols5 = 80, rows5 = 13;
+    const map5 = createBlankMap(cols5, rows5);
+    for (let c = 0; c < cols5; c++) { map5[12][c] = 1; map5[11][c] = 1; }
+    for (let c = 10; c <= 15; c++) { map5[12][c] = 0; map5[11][c] = 0; }
+    for (let c = 25; c <= 30; c++) { map5[12][c] = 0; map5[11][c] = 0; }
+    for (let c = 45; c <= 50; c++) { map5[12][c] = 0; map5[11][c] = 0; }
+    for (let c = 60; c <= 65; c++) { map5[12][c] = 0; map5[11][c] = 0; }
+    [[8, 7, 2], [18, 5, 2], [28, 4, 3], [35, 8, 2], [48, 6, 3], [58, 8, 2], [68, 5, 3]].forEach(([c, r, w]) => {
+        for (let i = 0; i < w; i++) map5[r][c + i] = 2;
+    });
+    [[9, 6], [19, 4], [29, 3], [36, 7], [49, 5], [59, 7], [69, 4]].forEach(([c, r]) => map5[r][c] = 3);
+    [[5, 10], [20, 10], [40, 10], [55, 10], [70, 10]].forEach(([c, r]) => map5[r][c] = 4);
+    for (let r = 2; r <= 11; r++) map5[r][77] = 5;
+    levels.push({ map: map5, cols: cols5, rows: rows5, timeLimit: 150 });
 
     return levels;
 }

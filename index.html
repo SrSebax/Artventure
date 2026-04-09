@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Artventure - Super Plataformas</title>
+    <title>Artventure</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
         <!-- Start Screen -->
         <div id="startScreen">
             <h1>ARTVENTURE</h1>
-            <p class="subtitle">🌟 Ana Sofia Naranjo Henao - Emanuel Velez 🌟</p>
+            <p class="subtitle">🌟 Ana Naranjo - Emanuel Velez 🌟</p>
             
             <div id="levelSelector">
                 <h3>Selecciona un Nivel:</h3>
@@ -28,11 +28,19 @@
                         <button class="level-btn" data-level="2">Obra 3</button>
                         <div class="best-score" id="best-2">Puntuación: 0 🪙 | 0s</div>
                     </div>
+                    <div class="level-card">
+                        <button class="level-btn" data-level="3">Obra 4</button>
+                        <div class="best-score" id="best-3">Puntuación: 0 🪙 | 0s</div>
+                    </div>
+                    <div class="level-card">
+                        <button class="level-btn" data-level="4">Obra 5</button>
+                        <div class="best-score" id="best-4">Puntuación: 0 🪙 | 0s</div>
+                    </div>
                 </div>
             </div>
 
             <div class="hint">
-                PC: Flechas o WASD para mover · Espacio o Z para saltar<br>
+                PC: Flechas o WASD para mover · Espacio o Z para saltar · Doble salto<br>
                 Móvil: Controles táctiles en pantalla
             </div>
         </div>
@@ -41,13 +49,37 @@
         <div id="ui">
             <div id="hud">
                 <div id="hudLeft">
+                    <button id="menuBtn" title="Menú Principal">🏠</button>
+                    <button id="retryBtn" title="Reiniciar Nivel">🔄</button>
                     <span id="livesBar">❤️ x3</span>
                     <span id="coinsBar">🪙 0</span>
                 </div>
                 <div id="hudRight">
-                    <span id="levelBar">Mundo 1-1</span>
+                    <div id="puzzleStatus">🖼️ <span id="piecesCollected">0 / 0</span></div>
+                    <span id="levelBar">Obra 1-1</span>
                     <span id="timerBar">⏱ 60</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- Puzzle Screen -->
+        <div id="puzzleScreen" style="display: none;">
+            <div id="puzzleInfoPanel">
+                <div id="artworkMetadata">
+                    <h2 id="artTitle">Título de la Obra</h2>
+                    <p>Autor: <span id="artAuthor">Nombre del Autor</span></p>
+                    <p>Año: <span id="artYear">1900</span></p>
+                    <a id="artLink" href="#" target="_blank">Más información <i class="fas fa-external-link-alt"></i></a>
+                </div>
+                <div id="puzzleControls">
+                    <button id="puzzleContinue" class="puzzle-btn">ESPERANDO PIEZAS...</button>
+                    <button id="puzzleRetry" class="puzzle-btn secondary">REINTENTAR NIVEL</button>
+                    <button id="puzzleMenu" class="puzzle-btn secondary">MENU PRINCIPAL</button>
+                </div>
+            </div>
+            <div id="puzzleGameArea">
+                <div id="puzzleBoard"></div>
+                <div id="puzzlePieces"></div>
             </div>
         </div>
 

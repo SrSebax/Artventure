@@ -13,6 +13,8 @@ export class Player extends Entity {
         this.deadTimer = 0;
         this.invincible = 0;
         this.jumpPressed = false;
+        this.jumpCount = 0;
+        this.maxJumps = 2;
         this.bobT = 0;
     }
 
@@ -38,11 +40,24 @@ export class Player extends Entity {
         }
 
         // Y Movement (Jump)
-        const jumpNow = input.isJump();
-        if (jumpNow && !this.jumpPressed && this.onGround) {
-            this.vy = this.jumpForce;
-            this.jumpPressed = true;
+        if (this.onGround) {
+            this.jumpCount = 0;
         }
+
+        const jumpNow = input.isJump();
+        
+        if (jumpNow && !this.jumpPressed) {
+            if (this.onGround || this.jumpCount < this.maxJumps) {
+                this.vy = this.jumpForce;
+                // El segundo salto es un poco menos potente
+                if (this.jumpCount > 0) {
+                    this.vy = this.jumpForce * 0.9; 
+                }
+                this.jumpPressed = true;
+                this.jumpCount++;
+            }
+        }
+        
         if (!jumpNow) this.jumpPressed = false;
 
         this.vy += GRAVITY;
