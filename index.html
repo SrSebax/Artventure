@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Artventure - Super Plataformas</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <!-- Start Screen -->
+        <div id="startScreen">
+            <h1>ARTVENTURE</h1>
+            <p class="subtitle">🌟 Ana Sofia Naranjo Henao - Emanuel Velez 🌟</p>
+            
+            <div id="levelSelector">
+                <h3>Selecciona un Nivel:</h3>
+                <div class="level-grid">
+                    <div class="level-card">
+                        <button class="level-btn" data-level="0">Obra 1</button>
+                        <div class="best-score" id="best-0">Puntuación: 0 🪙 | 0s</div>
+                    </div>
+                    <div class="level-card">
+                        <button class="level-btn" data-level="1">Obra 2</button>
+                        <div class="best-score" id="best-1">Puntuación: 0 🪙 | 0s</div>
+                    </div>
+                    <div class="level-card">
+                        <button class="level-btn" data-level="2">Obra 3</button>
+                        <div class="best-score" id="best-2">Puntuación: 0 🪙 | 0s</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hint">
+                PC: Flechas o WASD para mover · Espacio o Z para saltar<br>
+                Móvil: Controles táctiles en pantalla
+            </div>
+        </div>
+
+        <!-- UI / HUD -->
+        <div id="ui">
+            <div id="hud">
+                <div id="hudLeft">
+                    <span id="livesBar">❤️ x3</span>
+                    <span id="coinsBar">🪙 0</span>
+                </div>
+                <div id="hudRight">
+                    <span id="levelBar">Mundo 1-1</span>
+                    <span id="timerBar">⏱ 60</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Surface -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Messages / Dialogs -->
+        <div id="message">
+            <h2 id="msgTitle">¡Buen trabajo!</h2>
+            <div id="msgStats" style="margin-bottom: 20px; font-weight: bold; color: #ffd93d;"></div>
+            <p id="msgText">Has superado el desafío.</p>
+            <div id="msgActions" style="display: flex; gap: 10px; justify-content: center;">
+                <button id="msgBtn">CONTINUAR</button>
+                <button id="msgRetryBtn" style="background: #555; color: #fff;">REINTENTAR</button>
+            </div>
+        </div>
+
+        <!-- Touch Controls -->
+        <div id="controls">
+            <div class="dpad">
+                <button id="btnLeft">◀</button>
+                <button id="btnRight">▶</button>
+            </div>
+            <div class="action-btns">
+                <button class="action-btn" id="btnJump">JUMP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Entry Script -->
+    <script type="module" src="js/game.js"></script>
+</body>
+</html>
